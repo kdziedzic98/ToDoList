@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Chess</title>
+    <meta name="robots" content="noindex">
     <link rel="stylesheet" href="css/chessboard-1.0.0.min.css">
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="js/chessboard-1.0.0.min.js"></script>
@@ -11,25 +12,25 @@
     <div id="board1" style="width: 400px"></div>
     <button id="startBtn">Start Position</button>
     <button id="clearBtn">Clear Board</button>
-    <button id="testBtn">test</button>
     <script>
 
         var board1 = null
-        var game = new Chess()
+        var game = new Chess(
+          '3qk3/8/pppppppp/8/8/PPPPPPPP/8/3QK3 w - - 0 1'
+        )
 
-        //funkcja ustalająca możliwość wykonania ruchu jedynie białymi figurami oraz zablokowanie wykonania ruchu po zakończeniu gry
         function onDragStart (source, piece, position, orientation) {
 
             if (game.game_over()) return false
 
-            if (piece.search(/^b/) !== -1)  return false
-          
+            if (piece.search(/^w/) === -1)
+              return false
+
         }
 
         function makeRandomMove () {
             var possibleMoves = game.moves()
 
-            // game over
             if (possibleMoves.length === 0) return
 
             var randomIdx = Math.floor(Math.random() * possibleMoves.length)
@@ -37,7 +38,6 @@
             board1.position(game.fen())
         }
 
-        //funkcja wyświetlająca pozycję startową, pozycję docelową, rodzaj figury, ustawienie szachownicy przed ruchem oraz ustawienie szachownicy po ruchu
         function onDrop (source, target, piece, oldPos, newPos ) {
           console.log('Position changed:')
           console.log('Source: ' + source)
@@ -47,29 +47,24 @@
           console.log('New position: ' + Chessboard.objToFen(newPos))
           console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
-            // see if the move is legal
           var move = game.move({
             from: source,
             to: target,
-            promotion: 'q' // NOTE: always promote to a queen for example simplicity
+            promotion: 'q' 
           })
 
-          // illegal move
           if (move === null) return 'snapback'
 
-          // make random legal move for black
           window.setTimeout(makeRandomMove, 250)
 
         }
-
 
         function onSnapEnd () {
           board1.position(game.fen())
         }
 
-        //ustalanie konfiguracji szachownicy
         var config = {
-            position: '3qk3/8/pppppppp/8/8/PPPPPPPP/8/3QK3',
+            position: '3qk3/8/pppppppp/8/8/PPPPPPPP/8/3QK3 w - - 0 1',
             draggable: true,
             moveSpeed: 'slow',
             snapbackSpeed: 500,
@@ -79,12 +74,10 @@
             onSnapEnd: onSnapEnd
         };
 
-        //tworzenie szachownicy na podstawie config
         board1 = Chessboard('board1', config);
 
         $('#startBtn').on('click', function() { board1.position('3qk3/8/pppppppp/8/8/PPPPPPPP/8/3QK3')  });
         $('#clearBtn').on('click', board1.clear);
-        $('#testBtn').on('click', function () { board1.move('e3-e5')    });
     </script>
   </body>
 </html>
