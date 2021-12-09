@@ -1,1 +1,0 @@
-Tworzenie repozytorium, wgranie plików, "open repository" wybranie utworzonego i otworzenie jako zdalny obszar roboczy
